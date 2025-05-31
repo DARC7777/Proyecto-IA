@@ -1,0 +1,2 @@
+# Ignorar datos locales (raw y backup)
+data/backup/
