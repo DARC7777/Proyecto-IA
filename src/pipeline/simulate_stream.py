@@ -1,30 +1,43 @@
 # src/pipeline/simulate_stream.py
 
 import pandas as pd
-import joblib
 import time
+import joblib
+from huggingface_hub import hf_hub_download
+from sklearn.ensemble import RandomForestClassifier
 
-print("📦 Cargando modelo desde Hugging Face o local...")
-model = joblib.load("models/random_forest_baseline.pkl")
+# 📦 Cargar modelo desde Hugging Face (si no está localmente)
+try:
+    print("📦 Cargando modelo desde Hugging Face o local...")
+    model_path = hf_hub_download(
+        repo_id="Juannavas38/fraud-model-rf",
+        filename="random_forest_baseline.pkl",
+        cache_dir="models"
+    )
+except:
+    model_path = "models/random_forest_baseline.pkl"
 
+model = joblib.load(model_path)
+
+# 🧾 Cargar datos simulados
 print("🧾 Cargando datos simulados...")
 data = pd.read_parquet("data/processed/full_transactions_10m.parquet")
 
-# Filtrar transacciones con etiqueta
-data = data[data["target"].notna()].reset_index(drop=True)
+# ✅ Usar la columna 'is_fraud' como target
+data = data[data["is_fraud"].notna()].reset_index(drop=True)
+y = data["is_fraud"]
+X = data.drop(columns=["is_fraud", "id", "date", "card_id", "client_id", "mcc", "mcc_description"])
 
-# Separar variables predictoras
-X = data.drop(columns=["target"])
-y = data["target"]
+# 🔁 Simular flujo de datos
+print("📡 Iniciando simulación de flujo de transacciones...\n")
+for i in range(10):  # Simula solo 10 transacciones para demostración
+    x_i = X.iloc[[i]]
+    y_i = y.iloc[i]
 
-print("▶️ Iniciando simulación de flujo en tiempo real...\n")
+    pred = model.predict(x_i)[0]
+    proba = model.predict_proba(x_i)[0][1]
 
-for i in range(0, len(X), 100):  # Lotes de 100 transacciones
-    batch = X.iloc[i:i+100]
-    preds = model.predict_proba(batch)[:, 1]
+    print(f"🧾 Transacción #{i + 1} | Real: {y_i} | Predicción: {pred} | Riesgo: {proba:.2%}")
 
-    for j, prob in enumerate(preds):
-        if prob > 0.9:
-            print(f"⚠️  ALERTA: Transacción {i+j} sospechosa con probabilidad {prob:.2f}")
-
-    time.sleep(0.5)  # Espera 0.5 segundos entre lotes (simulación)
+    # ⏱️ Simula llegada de datos en tiempo real
+    time.sleep(1)
