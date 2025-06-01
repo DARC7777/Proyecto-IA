@@ -1,2 +1,3 @@
 # Ignorar datos locales (raw y backup)
 data
+models/
