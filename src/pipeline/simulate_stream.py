@@ -30,7 +30,7 @@ X = data.drop(columns=["is_fraud", "id", "date", "card_id", "client_id", "mcc", 
 
 # 🔁 Simular flujo de datos
 print("📡 Iniciando simulación de flujo de transacciones...\n")
-for i in range(1000):  # Simula solo 10 transacciones para demostración
+for i in range(1000):  # Simula solo 1000 transacciones para demostración
     x_i = X.iloc[[i]]
     y_i = y.iloc[i]
 
