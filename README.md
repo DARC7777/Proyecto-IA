@@ -1,36 +1,42 @@
 # Sistema de Detección y Prevención de Fraudes Financieros
 
-Este repositorio contiene el proyecto para desarrollar modelos de aprendizaje automático que identifiquen transacciones financieras potencialmente fraudulentas en tiempo real. El objetivo es construir una base robusta para GlobalBank, de modo que pueda reconocer patrones de fraude, disminuir falsos positivos y generar alertas instantáneas ante actividades sospechosas.
+Este repositorio contiene el desarrollo de una **prueba de concepto** para detectar transacciones financieras fraudulentas en tiempo real. El objetivo es ofrecer una solución funcional y escalable para **GlobalBank**, utilizando técnicas de aprendizaje automático, despliegue con Docker y modelos alojados en Hugging Face Hub.
 
 ---
 
-## Tabla de Contenidos
+## 📂 Tabla de Contenidos
+
 - [Descripción del Proyecto](#descripción-del-proyecto)
+- [Arquitectura del Sistema](#arquitectura-del-sistema)
 - [Integrantes](#integrantes)
 - [Objetivos](#objetivos)
-  - [General](#objetivo-general)
-  - [Específicos](#objetivos-específicos)
 - [Dataset](#dataset)
 - [Estructura del Repositorio](#estructura-del-repositorio)
-- [Avances Recientes](#avances-recientes)
-- [Uso del Proyecto](#uso-del-proyecto)
+- [Despliegue en Hugging Face Spaces](#despliegue-en-hugging-face-spaces)
 
 ---
 
-## Descripción del Proyecto
+## 🧠 Descripción del Proyecto
 
-A medida que crecen las transacciones digitales, las instituciones financieras enfrentan un riesgo cada vez mayor de fraude. Este proyecto busca:
+El sistema detecta transacciones sospechosas en tiempo real, minimiza falsos positivos y permite una fácil investigación por parte de analistas. Para ello:
 
-- Detectar a tiempo transacciones fraudulentas en el flujo diario de datos.
-- Minimizar los falsos positivos para no bloquear operaciones legítimas.
-- Adaptarse dinámicamente a nuevos patrones de fraude mediante reentrenamientos periódicos.
-- Facilitar la investigación de casos sospechosos a analistas de fraude.
-
-El proyecto está desarrollado en Python bajo una arquitectura modular escalable y se encuentra alineado con buenas prácticas de MLOps.
+- Se entrena un modelo de clasificación supervisado.
+- Se simula un flujo de transacciones que se analizan secuencialmente.
+- Se despliega una API para predecir fraudes usando el modelo.
 
 ---
 
-## Integrantes
+## 🧱 Arquitectura del Sistema
+
+- **Entrenamiento Offline:** El modelo Random Forest se entrena localmente y se sube a Hugging Face Hub.
+- **Simulación:** Se genera un flujo de datos simulados que imita operaciones reales.
+- **Predicción Online:** Una API construida con FastAPI consulta el modelo en Hugging Face Hub.
+- **Despliegue:** Se utiliza Docker para crear un contenedor listo para Hugging Face Spaces.
+
+---
+
+## 👥 Integrantes
+
 - Juan Sebastián Giraldo Sepúlveda  
 - Juan Sebastián Navas Gómez  
 - Daniel Alejandro Ruiz Carrillo  
@@ -38,59 +44,46 @@ El proyecto está desarrollado en Python bajo una arquitectura modular escalable
 
 ---
 
-## Objetivos
+## 🎯 Objetivos
 
 ### Objetivo General
-Desarrollar modelos de machine learning capaces de identificar transacciones financieras fraudulentas en tiempo real, empleando datos históricos y técnicas avanzadas de aprendizaje automático para GlobalBank.
+Construir una plataforma básica de detección de fraudes que sea escalable, modular y accesible desde cualquier navegador.
 
 ### Objetivos Específicos
-- Investigar y seleccionar algoritmos supervisados y no supervisados adecuados para el problema.
-- Realizar EDA para entender distribuciones, detectar desbalance y descubrir patrones relevantes.
-- Preprocesar y limpiar los datos (normalización, codificación, valores faltantes, etc.).
-- Entrenar, validar y comparar modelos como Random Forest, XGBoost, LightGBM, Redes Neuronales, Autoencoders, Isolation Forest, etc.
-- Implementar una simulación secuencial para evaluación en tiempo real.
-- Usar métricas como precisión, recall, F1-score, AUC-ROC y tasa de falsos positivos.
-- Documentar cada fase y presentar una propuesta viable para producción.
+
+- Entrenar un modelo de clasificación (Random Forest).
+- Simular un flujo continuo de transacciones.
+- Evaluar el modelo con métricas como AUC-ROC, precisión y recall.
+- Subir el modelo a Hugging Face Hub.
+- Desplegar una demo en línea usando Docker en Hugging Face Spaces.
 
 ---
 
-## Dataset
+## 📊 Dataset
 
-**Fuente principal:**
-- [Transactions Fraud Datasets – Kaggle](https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets)
-
-**Descripción:**
-- Transacciones históricas etiquetadas como legítimas o fraudulentas.
-- Variables: monto, hora, tipo, MCC, tarjetas, clientes, geolocalización, etc.
-
-**Dataset procesado para entrenamiento:**
-- `data/processed/full_transactions_10m.parquet`
+- **Fuente principal:** [Transactions Fraud Datasets – Kaggle](https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets)
+- Se procesaron 10 millones de transacciones para entrenamiento y prueba (`full_transactions_10m.parquet`).
+- El modelo entrenado se encuentra disponible en Hugging Face: [`fraud-model-rf`](https://huggingface.co/Juannavas38/fraud-model-rf)
 
 ---
 
-## Estructura del Repositorio
+## 🗂️ Estructura del Repositorio
+
+```plaintext
 Proyecto-IA/
-├── data/
-│ ├── backup/ # Datos originales sin procesar
-│ ├── processed/ # Dataset final en formato .parquet
-├── models/ # Modelos se almacenan ahora en Hugging Face
-├── notebooks/ # Análisis exploratorio y limpieza de datos
+├── app/
+│   └── app.py                 # API FastAPI para detección de fraude
+├── data/                      # (NO se sube al repositorio)
+├── models/                    # (vacía, modelo se carga desde Hugging Face)
+├── notebooks/                 # Jupyter notebooks de análisis y simulación
 ├── src/
-│ └── modeling/
-│ ├── train_baseline_model.py # Entrenamiento Random Forest
-│ └── upload_model_to_hf.py # Subida del modelo a Hugging Face
+│   ├── modeling/
+│   │   └── train_baseline_model.py
+│   ├── pipeline/
+│   │   └── simulate_stream.py
+│   └── utils/
+│       └── predict_utils.py   # Funciones auxiliares para predicción
+├── Dockerfile                 # Imagen para Hugging Face Spaces
+├── requirements.txt           # Dependencias
 ├── .gitignore
-├── README.md
-
-
-## Avances Recientes
-
-- ✅ Se realizó limpieza de datos, codificación de variables, y reducción del dataset a 10 millones de registros.
-- ✅ Se integraron los datasets de transacciones, tarjetas y usuarios.
-- ✅ Se añadió la descripción del MCC a las transacciones.
-- ✅ Se entrenó un modelo base de Random Forest utilizando todas las variables disponibles.
-- ✅ Se migró el modelo a Hugging Face para evitar el error de Git por tamaño de archivo (>100MB).
-- ✅ Se eliminó el seguimiento de `models/` con Git LFS y `filter-repo` para limpiar el historial.
-
----
-
+└── README.md
