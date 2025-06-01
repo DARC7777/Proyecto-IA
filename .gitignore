@@ -4,3 +4,4 @@ data/
 *.pkl
 *.parquet
 __pycache__/
+fraud-api/
