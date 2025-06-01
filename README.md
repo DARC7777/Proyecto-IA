@@ -69,16 +69,25 @@ Contiene millones de transacciones etiquetadas como legítimas o fraudulentas, c
 ---
 
 ## Estructura del Repositorio
-├── data/ *Muy pesados se utiliza git ignore se tiene que crear en el repositorio local
-│ ├── backup/ *Archivos originales descargados
-│ └── processed/ # Dataset final: full_transactions_10m.parquet
+Proyecto-IA/
+├── data/
+│ ├── backup/ # Archivos originales descargados de Kaggle
+│ └── processed/ # Dataset procesado listo para modelado
+│ └── full_transactions_10m.parquet
+│
 ├── notebooks/
-│ ├── datos.ipynb # Exploración inicial
-│ ├── Limpieza_de_datos.ipynb # Preprocesamiento y merge
-│ └── validacion_full_transactions_10m.ipynb # Validaciones del dataset de full transactionns
-├── src/ # Código fuente (scripts modulares)
-├── README.md
-└── requirements.txt # Dependencias del proyecto
+│ ├── datos.ipynb # EDA inicial
+│ ├── Limpieza_de_datos.ipynb # Unificación, depuración y reducción
+│ └── validacion_full_transactions_10m.ipynb # Inspección final del dataset procesado
+│
+├── src/ # Código Python modular (pendiente de completar)
+│ ├── preprocessing/ # Funciones para limpieza y preparación
+│ ├── modeling/ # Entrenamiento y evaluación de modelos
+│ └── realtime/ # Simulación o consumo de datos en tiempo real (PoC)
+│
+├── .gitignore # Archivos y carpetas que no deben subir a Git
+├── README.md # Documentación principal del proyecto
+└── requirements.txt # Librerías necesarias para ejecutar el proyecto
 
 ## 🔄 Estado Actual del Proyecto
 
