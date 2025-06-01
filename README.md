@@ -1,33 +1,36 @@
 # Sistema de Detección y Prevención de Fraudes Financieros
 
-Este repositorio contiene un proyecto de analítica avanzada y machine learning para la detección de transacciones financieras potencialmente fraudulentas en tiempo real. Su desarrollo busca ofrecer una solución escalable para la institución ficticia **GlobalBank**, capaz de reconocer patrones sospechosos, minimizar falsos positivos y facilitar la investigación por parte de analistas de fraude.
+Este repositorio contiene el proyecto para desarrollar modelos de aprendizaje automático que identifiquen transacciones financieras potencialmente fraudulentas en tiempo real. El objetivo es construir una base robusta para GlobalBank, de modo que pueda reconocer patrones de fraude, disminuir falsos positivos y generar alertas instantáneas ante actividades sospechosas.
 
 ---
 
 ## Tabla de Contenidos
-
 - [Descripción del Proyecto](#descripción-del-proyecto)
 - [Integrantes](#integrantes)
 - [Objetivos](#objetivos)
+  - [General](#objetivo-general)
+  - [Específicos](#objetivos-específicos)
 - [Dataset](#dataset)
 - [Estructura del Repositorio](#estructura-del-repositorio)
-- [Estado Actual del Proyecto](#estado-actual-del-proyecto)
+- [Avances Recientes](#avances-recientes)
+- [Uso del Proyecto](#uso-del-proyecto)
 
 ---
 
 ## Descripción del Proyecto
 
-A medida que las transacciones digitales se multiplican, las instituciones financieras enfrentan un creciente riesgo de fraude. Este proyecto aborda ese reto con los siguientes objetivos:
+A medida que crecen las transacciones digitales, las instituciones financieras enfrentan un riesgo cada vez mayor de fraude. Este proyecto busca:
 
-- Detectar en tiempo real transacciones fraudulentas en grandes volúmenes de datos.
-- Minimizar falsos positivos que afecten transacciones legítimas.
-- Adaptarse dinámicamente a nuevos esquemas de fraude mediante reentrenamiento periódico.
-- Proveer interpretabilidad y herramientas para la investigación de alertas sospechosas.
+- Detectar a tiempo transacciones fraudulentas en el flujo diario de datos.
+- Minimizar los falsos positivos para no bloquear operaciones legítimas.
+- Adaptarse dinámicamente a nuevos patrones de fraude mediante reentrenamientos periódicos.
+- Facilitar la investigación de casos sospechosos a analistas de fraude.
+
+El proyecto está desarrollado en Python bajo una arquitectura modular escalable y se encuentra alineado con buenas prácticas de MLOps.
 
 ---
 
 ## Integrantes
-
 - Juan Sebastián Giraldo Sepúlveda  
 - Juan Sebastián Navas Gómez  
 - Daniel Alejandro Ruiz Carrillo  
@@ -38,66 +41,56 @@ A medida que las transacciones digitales se multiplican, las instituciones finan
 ## Objetivos
 
 ### Objetivo General
-
-Desarrollar modelos de machine learning que identifiquen transacciones fraudulentas en tiempo real, integrando múltiples fuentes de datos y aplicando técnicas de análisis predictivo.
+Desarrollar modelos de machine learning capaces de identificar transacciones financieras fraudulentas en tiempo real, empleando datos históricos y técnicas avanzadas de aprendizaje automático para GlobalBank.
 
 ### Objetivos Específicos
-
-1. Investigar y seleccionar algoritmos supervisados y no supervisados aplicables al problema de fraude.
-2. Realizar un análisis exploratorio para comprender patrones, distribuciones y posibles sesgos.
-3. Preprocesar y limpiar los datos, incluyendo codificación, normalización y manejo de desbalance.
-4. Entrenar y comparar modelos como Random Forest, LightGBM, XGBoost, redes neuronales y autoencoders.
-5. Implementar una simulación de predicción en tiempo real como prueba de concepto (PoC).
-6. Evaluar el desempeño con métricas como AUC-ROC, recall, F1-score y tasa de falsos positivos.
-7. Documentar todo el proceso técnico y entregar una propuesta escalable a producción (MLOps).
+- Investigar y seleccionar algoritmos supervisados y no supervisados adecuados para el problema.
+- Realizar EDA para entender distribuciones, detectar desbalance y descubrir patrones relevantes.
+- Preprocesar y limpiar los datos (normalización, codificación, valores faltantes, etc.).
+- Entrenar, validar y comparar modelos como Random Forest, XGBoost, LightGBM, Redes Neuronales, Autoencoders, Isolation Forest, etc.
+- Implementar una simulación secuencial para evaluación en tiempo real.
+- Usar métricas como precisión, recall, F1-score, AUC-ROC y tasa de falsos positivos.
+- Documentar cada fase y presentar una propuesta viable para producción.
 
 ---
 
 ## Dataset
 
-### Principal
+**Fuente principal:**
+- [Transactions Fraud Datasets – Kaggle](https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets)
 
-**Transactions Fraud Datasets (Kaggle)**  
-URL: [https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets](https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets)  
-Contiene millones de transacciones etiquetadas como legítimas o fraudulentas, con información de tarjetas, clientes, comercios y montos.
+**Descripción:**
+- Transacciones históricas etiquetadas como legítimas o fraudulentas.
+- Variables: monto, hora, tipo, MCC, tarjetas, clientes, geolocalización, etc.
 
-### Adicionales (Opcional)
-
-- **Amazon Fraud Dataset Benchmark**  
-  [https://www.amazon.science/datasets/fraud-dataset-benchmark](https://www.amazon.science/datasets/fraud-dataset-benchmark)
+**Dataset procesado para entrenamiento:**
+- `data/processed/full_transactions_10m.parquet`
 
 ---
 
 ## Estructura del Repositorio
 Proyecto-IA/
 ├── data/
-│ ├── backup/ # Archivos originales descargados de Kaggle
-│ └── processed/ # Dataset procesado listo para modelado
-│ └── full_transactions_10m.parquet
-│
-├── notebooks/
-│ ├── datos.ipynb # EDA inicial
-│ ├── Limpieza_de_datos.ipynb # Unificación, depuración y reducción
-│ └── validacion_full_transactions_10m.ipynb # Inspección final del dataset procesado
-│
-├── src/ # Código Python modular (pendiente de completar)
-│ ├── preprocessing/ # Funciones para limpieza y preparación
-│ ├── modeling/ # Entrenamiento y evaluación de modelos
-│ └── realtime/ # Simulación o consumo de datos en tiempo real (PoC)
-│
-├── .gitignore # Archivos y carpetas que no deben subir a Git
-├── README.md # Documentación principal del proyecto
-└── requirements.txt # Librerías necesarias para ejecutar el proyecto
+│ ├── backup/ # Datos originales sin procesar
+│ ├── processed/ # Dataset final en formato .parquet
+├── models/ # Modelos se almacenan ahora en Hugging Face
+├── notebooks/ # Análisis exploratorio y limpieza de datos
+├── src/
+│ └── modeling/
+│ ├── train_baseline_model.py # Entrenamiento Random Forest
+│ └── upload_model_to_hf.py # Subida del modelo a Hugging Face
+├── .gitignore
+├── README.md
 
-## 🔄 Estado Actual del Proyecto
 
-| Fase                      | Estado      | Notas                                                       |
-|---------------------------|-------------|--------------------------------------------------------------|
-| Recolección de Datos      | ✅ Completa | Dataset cargado desde Kaggle                                |
-| EDA Inicial               | ✅ Completa | Análisis básico en `datos.ipynb`                            |
-| Limpieza y Preprocesamiento | ✅ Completa | Dataset consolidado: `full_transactions_10m.parquet`        |
-| Modelado                  | 🔜 En curso | Próximo paso: entrenamiento con LightGBM, RandomForest, etc.|
-| Simulación en tiempo real | 🔜 Pendiente | Se hará PoC con flujo secuencial de transacciones           |
-| Documentación final       | 🔄 En progreso | Se actualizará junto al avance del modelo                   |
+## Avances Recientes
+
+- ✅ Se realizó limpieza de datos, codificación de variables, y reducción del dataset a 10 millones de registros.
+- ✅ Se integraron los datasets de transacciones, tarjetas y usuarios.
+- ✅ Se añadió la descripción del MCC a las transacciones.
+- ✅ Se entrenó un modelo base de Random Forest utilizando todas las variables disponibles.
+- ✅ Se migró el modelo a Hugging Face para evitar el error de Git por tamaño de archivo (>100MB).
+- ✅ Se eliminó el seguimiento de `models/` con Git LFS y `filter-repo` para limpiar el historial.
 
 ---
+
