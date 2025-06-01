@@ -1,43 +1,54 @@
-# src/pipeline/simulate_stream.py
-
 import pandas as pd
+import requests
 import time
-import joblib
-from huggingface_hub import hf_hub_download
-from sklearn.ensemble import RandomForestClassifier
 
-# 📦 Cargar modelo desde Hugging Face (si no está localmente)
-try:
-    print("📦 Cargando modelo desde Hugging Face o local...")
-    model_path = hf_hub_download(
-        repo_id="Juannavas38/fraud-model-rf",
-        filename="random_forest_baseline.pkl",
-        cache_dir="models"
-    )
-except:
-    model_path = "models/random_forest_baseline.pkl"
+# Ruta al archivo con datos simulados
+DATA_PATH = "data/processed/full_transactions_10m.parquet"
 
-model = joblib.load(model_path)
+# URL de la API desplegada en Hugging Face Spaces (URL corregida)
+API_URL = "https://juannavas38-fraud-api.hf.space/predict"
 
-# 🧾 Cargar datos simulados
-print("🧾 Cargando datos simulados...")
-data = pd.read_parquet("data/processed/full_transactions_10m.parquet")
+# Columnas exactas que se usaron en entrenamiento (extraídas del script local)
+FEATURE_COLUMNS = [
+    # Incluye aquí los nombres reales si los conoces
+    # O construye la lista automáticamente como abajo
+]
 
-# ✅ Usar la columna 'is_fraud' como target
-data = data[data["is_fraud"].notna()].reset_index(drop=True)
-y = data["is_fraud"]
-X = data.drop(columns=["is_fraud", "id", "date", "card_id", "client_id", "mcc", "mcc_description"])
+def main():
+    print("🧾 Cargando dataset de prueba...")
+    data = pd.read_parquet(DATA_PATH)
+    data = data[data["is_fraud"].notna()].reset_index(drop=True)
 
-# 🔁 Simular flujo de datos
-print("📡 Iniciando simulación de flujo de transacciones...\n")
-for i in range(1000):  # Simula solo 1000 transacciones para demostración
-    x_i = X.iloc[[i]]
-    y_i = y.iloc[i]
+    # Eliminar columnas no usadas
+    X = data.drop(columns=["is_fraud", "id", "date", "card_id", "client_id", "mcc", "mcc_description"])
+    y = data["is_fraud"]
 
-    pred = model.predict(x_i)[0]
-    proba = model.predict_proba(x_i)[0][1]
+    print(f"📊 Usando {X.shape[1]} columnas para predicción")
 
-    print(f"🧾 Transacción #{i + 1} | Real: {y_i} | Predicción: {pred} | Riesgo: {proba:.2%}")
+    for i in range(10):  # Simula 10 transacciones para probar
+        x_i = X.iloc[i].tolist()
+        y_i = y.iloc[i]
 
-    # ⏱️ Simula llegada de datos en tiempo real
-    time.sleep(1)
+        payload = {
+            "features": [float(x) for x in x_i]
+        }
+
+        print(f"▶️ Enviando transacción #{i+1} ({len(x_i)} features)...")
+
+        try:
+            response = requests.post(API_URL, json=payload)
+
+            if response.status_code == 200:
+                result = response.json()
+                pred = result['is_fraud']
+                print(f"✅ Real: {y_i} | Predicción: {pred}")
+            else:
+                print(f"⚠️  Error {response.status_code} - {response.text}")
+
+        except Exception as e:
+            print(f"❌ Error de conexión: {e}")
+
+        time.sleep(1)
+
+if __name__ == "__main__":
+    main()
