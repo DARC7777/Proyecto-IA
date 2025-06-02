@@ -1,18 +1,19 @@
+# src/pipeline/simulate_stream.py
+
 import pandas as pd
 import requests
 import time
+import os
 
 # Ruta al archivo con datos simulados
 DATA_PATH = "data/processed/full_transactions_10m.parquet"
 
-# URL de la API desplegada en Hugging Face Spaces (URL corregida)
+# URL de la API desplegada en Hugging Face Spaces
 API_URL = "https://juannavas38-fraud-api.hf.space/predict"
 
-# Columnas exactas que se usaron en entrenamiento (extraídas del script local)
-FEATURE_COLUMNS = [
-    # Incluye aquí los nombres reales si los conoces
-    # O construye la lista automáticamente como abajo
-]
+# Ruta para guardar resultados
+OUTPUT_PATH = "results/predicciones_simulacion.csv"
+os.makedirs("results", exist_ok=True)  # Crea carpeta si no existe
 
 def main():
     print("🧾 Cargando dataset de prueba...")
@@ -25,7 +26,9 @@ def main():
 
     print(f"📊 Usando {X.shape[1]} columnas para predicción")
 
-    for i in range(10):  # Simula 10 transacciones para probar
+    results = []
+
+    for i in range(10):  # Simula 10 transacciones
         x_i = X.iloc[i].tolist()
         y_i = y.iloc[i]
 
@@ -42,6 +45,13 @@ def main():
                 result = response.json()
                 pred = result['is_fraud']
                 print(f"✅ Real: {y_i} | Predicción: {pred}")
+
+                results.append({
+                    "transaccion_id": i + 1,
+                    "real": int(y_i),
+                    "prediccion": int(pred),
+                    "riesgo": None  # Para futuras versiones
+                })
             else:
                 print(f"⚠️  Error {response.status_code} - {response.text}")
 
@@ -50,5 +60,11 @@ def main():
 
         time.sleep(1)
 
+    # Guardar resultados en CSV
+    df_resultados = pd.DataFrame(results)
+    df_resultados.to_csv(OUTPUT_PATH, index=False)
+    print(f"\n📁 Resultados guardados en: {OUTPUT_PATH}")
+
 if __name__ == "__main__":
     main()
+
