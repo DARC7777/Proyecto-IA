@@ -30,7 +30,7 @@ if st.button("🚀 Iniciar Simulación"):
     resultados = []
     placeholder = st.empty()
 
-    for i in range(10):
+    for i in range(100):
         x_i = X.iloc[i].tolist()
         y_i = y.iloc[i]
 

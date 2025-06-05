@@ -28,7 +28,7 @@ def main():
 
     results = []
 
-    for i in range(10):  # Simula 10 transacciones
+    for i in range(100):  # Simula 10 transacciones
         x_i = X.iloc[i].tolist()
         y_i = y.iloc[i]
 
