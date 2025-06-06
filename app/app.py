@@ -1,17 +1,38 @@
-
 from fastapi import FastAPI
 from pydantic import BaseModel
-from src.utils.predict_utils import load_model, predict_transaction
+import pandas as pd
+import joblib
+import urllib.request
+import os
 
-app = FastAPI(title="Fraud Detection API")
+# URL del modelo en Hugging Face
+MODEL_URL = "https://huggingface.co/Juannavas38/fraud-model-rf/resolve/main/random_forest_baseline.pkl"
 
-# Cargar modelo desde Hugging Face al iniciar
-model = load_model()
+def load_model_from_url(url):
+    os.makedirs("models", exist_ok=True)
+    local_path = "models/temp_model.pkl"
+    
+    if not os.path.exists(local_path):
+        urllib.request.urlretrieve(url, local_path)
+    
+    model = joblib.load(local_path)
+    return model
 
+model = load_model_from_url(MODEL_URL)
+
+# Crear la API
+app = FastAPI(title="GlobalBank Fraud Detection API")
+
+# Definir el esquema de entrada
 class Transaction(BaseModel):
-    features: list[float]  # Lista con 217 features en orden
+    amount: float
+    credit_limit: float
+    current_age: float
+    yearly_income: float
 
+# Endpoint de predicción
 @app.post("/predict")
-def predict(transaction: Transaction):
-    prediction = predict_transaction(model, transaction.features)
-    return {"is_fraud": bool(prediction)}
+def predict(tx: Transaction):
+    input_data = pd.DataFrame([tx.dict()])
+    prediction = model.predict(input_data)[0]
+    return {"prediction": int(prediction)}
