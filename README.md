@@ -87,3 +87,10 @@ Proyecto-IA/
 ├── requirements.txt           # Dependencias
 ├── .gitignore
 └── README.md
+
+## 🎥 Demos Interactivos
+
+A continuación se presentan los videos de prueba realizados para los módulos desarrollados con Streamlit:
+
+- 🔗 [Video 1 - Simulación en Tiempo Real](https://youtu.be/rMcGILFsqrU)
+- 🔗 [Video 2 - Visualización de Resultados](https://youtu.be/HCZnPpCpJqg)
