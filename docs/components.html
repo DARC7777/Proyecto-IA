@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramas Técnicos - Sistema Detección Fraudes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .diagram-section {
+            padding: 40px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .diagram-section:last-child {
+            border-bottom: none;
+        }
+
+        .diagram-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .diagram-description {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #007bff;
+        }
+
+        /* Diagrama de Flujo de Datos */
+        .data-flow-diagram {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+            align-items: center;
+        }
+
+        .flow-step {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .flow-step.source { border-color: #dc3545; background: linear-gradient(135deg, #ffe6e6, #fff); }
+        .flow-step.ingestion { border-color: #fd7e14; background: linear-gradient(135deg, #fff3e0, #fff); }
+        .flow-step.processing { border-color: #ffc107; background: linear-gradient(135deg, #fffbf0, #fff); }
+        .flow-step.ml { border-color: #6f42c1; background: linear-gradient(135deg, #f3e5f5, #fff); }
+        .flow-step.output { border-color: #28a745; background: linear-gradient(135deg, #e8f5e9, #fff); }
+
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #6c757d;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Diagrama de Componentes */
+        .components-grid {
+            display: grid;
+            grid-template-areas: 
+                "frontend frontend api"
+                "database ml-model monitoring"
+                "external external security";
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .component-box {
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .component-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .frontend-comp { grid-area: frontend; border-color: #007bff; }
+        .api-comp { grid-area: api; border-color: #17a2b8; }
+        .database-comp { grid-area: database; border-color: #6c757d; }
+        .ml-comp { grid-area: ml-model; border-color: #6f42c1; }
+        .monitoring-comp { grid-area: monitoring; border-color: #28a745; }
+        .external-comp { grid-area: external; border-color: #fd7e14; }
+        .security-comp { grid-area: security; border-color: #dc3545; }
+
+        .component-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .component-details {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .component-details li {
+            padding: 5px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9em;
+        }
+
+        .component-details li:last-child {
+            border-bottom: none;
+        }
+
+        /* Diagrama de Arquitectura Cloud */
+        .cloud-architecture {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .aws-region {
+            border: 3px dashed #ff9800;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .availability-zone {
+            border: 2px solid #2196f3;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            background: rgba(255, 255, 255, 0.5);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .aws-service {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .aws-service:hover {
+            transform: scale(1.05);
+        }
+
+        .service-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        /* Diagrama de Capacidades IA */
+        .ai-capabilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .capability-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .capability-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .capability-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .capability-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .capability-metrics {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        /* Diagrama de Flujo ML Pipeline */
+        .ml-pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .pipeline-stage {
+            display: grid;
+            grid-template-columns: 150px 1fr 100px;
+            gap: 20px;
+            align-items: center;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #6f42c1;
+        }
+
+        .stage-number {
+            background: linear-gradient(135deg, #6f42c1, #9c27b0);
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .stage-content h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .stage-metrics {
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .data-flow-diagram {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .components-grid {
+                grid-template-areas: 
+                    "frontend"
+                    "api"
+                    "database"
+                    "ml-model"
+                    "monitoring"
+                    "external"
+                    "security";
+                grid-template-columns: 1fr;
+            }
+            
+            .availability-zone {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .legend {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Diagramas Técnicos del Sistema</h1>
+            <p>Arquitectura, Componentes y Capacidades de IA - GlobalBank Fraud Detection</p>
+        </div>
+
+        <!-- Diagrama 1: Flujo de Datos -->
+        <div class="diagram-section">
+            <div class="diagram-title">
+                🔄 Diagrama de Flujo de Datos en Tiempo Real
+            </div>
+            <div class="diagram-description">
+                <strong>Propósito:</strong> Muestra el flujo completo de una transacción desde su origen hasta la generación de alertas, incluyendo todos los puntos de procesamiento y transformación de datos.
+            </div>
+
+            <div class="data-flow-diagram">
+                <div class="flow-step source">
+                    <h4>📊 Fuentes</h4>
+                    <p><strong>Transacciones</strong></p>
+                    <ul style="text-align: left; font-size: 0.8em; list-style: none; padding: 0;">
+                        <li>• Core Bancario</li>
+                        <li>• ATMs</li>
+                        <li>• POS Terminals</li>
+                        <li>• Mobile Banking</li>
+                    </ul>
+                    <div style="margin-top: 10px; font-weight: bold; color: #dc3545;">~2M/día</div>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-step ingestion">
+                    <h4>🚀 Ingesta</h4>
+                    <p><strong>Kafka Streaming</strong></p>
+                    <ul style="text-align: left; font-size: 0.8em; list-style: none; padding: 0;">
+                        <li>• Event Streaming</li>
+                        <li>• Data Validation</li>
+                        <li>• Format Conversion</li>
+                        <li>• Queue Management</li>
+                    </ul>
+                    <div style="margin-top: 10px; font-weight: bold; color: #fd7e14;">100k/sec</div>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-step processing">
+                    <h4>⚙️ Procesamiento</h4>
+                    <p><strong>Feature Engineering</strong></p>
+                    <ul style="text-align: left; font-size: 0.8em; list-style: none; padding: 0;">
+                        <li>• Data Cleaning</li>
+                        <li>• Feature Creation</li>
+                        <li>• Normalization</li>
+                        <li>• Aggregations</li>
+                    </ul>
+                    <div style="margin-top: 10px; font-weight: bold; color: #ffc107;">47 Features</div>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-step ml">
+                    <h4>🤖 ML Inference</h4>
+                    <p><strong>Random Forest</strong></p>
+                    <ul style="text-align: left; font-size: 0.8em; list-style: none; padding: 0;">
+                        <li>• Model Scoring</li>
+                        <li>• Risk Assessment</li>
+                        <li>• Confidence Levels</li>
+                        <li>• Feature Importance</li>
+                    </ul>
+                    <div style="margin-top: 10px; font-weight: bold; color: #6f42c1;">85% Precision</div>
+                </div>
+
+                <div class="flow-arrow">→</div>
+
+                <div class="flow-step output">
+                    <h4>🚨 Alertas</h4>
+                    <p><strong>Decision Engine</strong></p>
+                    <ul style="text-align: left; font-size: 0.8em; list-style: none; padding: 0;">
+                        <li>• Risk Classification</li>
+                        <li>• Alert Generation</li>
+                        <li>• Notifications</li>
+                        <li>• Audit Logging</li>
+                    </ul>
+                    <div style="margin-top: 10px; font-weight: bold; color: #28a745;"><2sec SLA</div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-title">🏷️ Leyenda del Flujo de Datos</div>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #dc3545;"></div>
+                        <span>Fuentes de datos externas</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #fd7e14;"></div>
+                        <span>Ingesta y streaming</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffc107;"></div>
+                        <span>Procesamiento de datos</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #6f42c1;"></div>
+                        <span>Machine Learning</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #28a745;"></div>
+                        <span>Salidas y alertas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagrama 2: Componentes Lógicos -->
+        <div class="diagram-section">
+            <div class="diagram-title">
+                🏗️ Diagrama Lógico de Componentes
+            </div>
+            <div class="diagram-description">
+                <strong>Propósito:</strong> Detalla la arquitectura interna del sistema, mostrando la interacción entre componentes, APIs, bases de datos y servicios externos.
+            </div>
+
+            <div class="components-grid">
+                <div class="component-box frontend-comp">
+                    <div class="component-header">
+                        <span>🖥️</span>
+                        <span>Frontend Dashboard</span>
+                    </div>
+                    <ul class="component-details">
+                        <li><strong>Tecnología:</strong> React.js / HTML5</li>
+                        <li><strong>Funciones:</strong> Visualización en tiempo real</li>
+                        <li><strong>Usuarios:</strong> Analistas de fraude</li>
+                        <li><strong>Features:</strong> Charts, alerts, case management</li>
+                        <li><strong>Performance:</strong> <1s load time</li>
+                        <li><strong>Responsive:</strong> Mobile-first design</li>
+                    </ul>
+                </div>
+
+                <div class="component-box api-comp">
+                    <div class="component-header">
+                        <span>🔌</span>
+                        <span>API Gateway</span>
+                    </div>
+                    <ul class="component-details">
+                        <li><strong>Framework:</strong> Flask/FastAPI</li>
+                        <li><strong>Endpoints:</strong> /predict, /batch, /metrics</li>
+                        <li><strong>Auth:</strong> JWT + OAuth 2.0</li>
+                        <li><strong>Rate Limiting:</strong> 1000 req/min</li>
+                        <li><strong>Documentation:</strong> OpenAPI/Swagger</li>
+                        <li><strong>Monitoring:</strong> Health checks</li>
+                    </ul>
+                </div>
+
+                <div class="component-box database-comp">
+                    <div class="component-header">
+                        <span>🗄️</span>
+                        <span>Data Layer</span>
+                    </div>
+                    <ul class="component-details">
+                        <li><strong>Primary DB:</strong> PostgreSQL</li>
+                        <li><strong>Cache:</strong> Redis (in-memory)</li>
+                        <li><strong>Data Lake:</strong> Amazon S3</li>
+                        <li><strong>Search:</strong> Elasticsearch</li>
+                        <li><strong>Backup:</strong> Cross-region replication</li>
+                        <li><strong>Retention:</strong> 7 años (compliance)</li>
+                    </ul>
+                </div>
+
+                <div class="component-box ml-comp">
+                    <div class="component-header">
+                        <span>🤖</span>
+                        <span>ML Engine</span>
+                    </div>
+                    <ul class="component-details">
+                        <li><strong>Model:</strong> Random Forest (100 trees)</li>
+                        <li><strong>Platform:</strong> Hugging Face Hub</li>
+                        <li><strong>Features:</strong> 47 engineered features</li>
+                        <li><strong>Training:</strong> Weekly retraining</li>
+                        <li><strong>Validation:</strong> A/B testing</li>
+                        <li><strong>Explainability:</strong> SHAP values</li>
+                    </ul>
+                </div>
+
+                <div class="component-box monitoring-comp">
+                    <div class="component-header">
+                        <span>📊</span>
+                        <span>Monitoring & Ops</span>
+                    </div>
+                    <ul class="component-details">
+                        <li><strong>Logs:</strong> ELK Stack centralized</li>
+                        <li><strong>Metrics:</strong> Prometheus + Grafana</li>
+                        <li><strong>Alerts:</strong> PagerDuty integration</li>
+                        <li><strong>Drift Detection:</strong> Automated</li>
+                        <li><strong>Performance:</strong> APM tools</li>
+                        <li><strong>SLA:</strong> 99.9% uptime</li>
+                    </ul>
+                </div>
+
+                <div class="component-box external-comp">
+                    <div class="component-header">
+                        <span>🌐</span>
+                        <span>External Integrations</span>
+                    </div>
+                    <ul class="component-details">
+                        <li><strong>Core Banking:</strong> REST APIs</li>
+                        <li><strong>Geolocation:</strong> MaxMind GeoIP</li>
+                        <li><strong>Notifications:</strong> SendGrid/Twilio</li>
+                        <li><strong>Compliance:</strong> KYC/AML services</li>
+                        <li><strong>Fraud Networks:</strong> External feeds</li>
+                        <li><strong>Reporting:</strong> Regulatory APIs</li>
+                    </ul>
+                </div>
+
+                <div class="component-box security-comp">
+                    <div class="component-header">
+                        <span>🔒</span>
+                        <span>Security Layer</span>
+                    </div>
+                    <ul class="component-details">
+                        <li><strong>Encryption:</strong> AES-256 at rest</li>
+                        <li><strong>Transport:</strong> TLS 1.3</li>
+                        <li><strong>Access Control:</strong> RBAC + MFA</li>
+                        <li><strong>Audit:</strong> Complete trail</li>
+                        <li><strong>Compliance:</strong> PCI DSS Level 1</li>
+                        <li><strong>Penetration:</strong> Quarterly tests</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagrama 3: Arquitectura Cloud AWS -->
+        <div class="diagram-section">
+            <div class="diagram-title">
+                ☁️ Arquitectura de Infraestructura Cloud (AWS)
+            </div>
+            <div class="diagram-description">
+                <strong>Propósito:</strong> Muestra la distribución de servicios AWS across múltiples zonas de disponibilidad para garantizar alta disponibilidad y escalabilidad.
+            </div>
+
+            <div class="cloud-architecture">
+                <div style="text-align: center; font-size: 1.2em; font-weight: bold; margin-bottom: 20px; color: #ff9800;">
+                    🌍 AWS Region: us-east-1 (N. Virginia)
+                </div>
+                
+                <div class="aws-region">
+                    <div style="font-weight: bold; margin-bottom: 20px; color: #ff9800;">📍 Availability Zone A</div>
+                    <div class="availability-zone">
+                        <div class="aws-service">
+                            <div class="service-icon">🖥️</div>
+                            <h4>EC2 Instances</h4>
+                            <p>2x m5.large<br>Load Balanced</p>
+                        </div>
+                        <div class="aws-service">
+                            <div class="service-icon">🗄️</div>
+                            <h4>RDS Primary</h4>
+                            <p>PostgreSQL<br>Multi-AZ</p>
+                        </div>
+                        <div class="aws-service">
+                            <div class="service-icon">🚀</div>
+                            <h4>ElastiCache</h4>
+                            <p>Redis Cluster<br>Cache Layer</p>
+                        </div>
+                    </div>
+
+                    <div style="font-weight: bold; margin: 30px 0 20px 0; color: #ff9800;">📍 Availability Zone B</div>
+                    <div class="availability-zone">
+                        <div class="aws-service">
+                            <div class="service-icon">🖥️</div>
+                            <h4>EC2 Instances</h4>
+                            <p>2x m5.large<br>Auto Scaling</p>
+                        </div>
+                        <div class="aws-service">
+                            <div class="service-icon">🗄️</div>
+                            <h4>RDS Standby</h4>
+                            <p>PostgreSQL<br>Failover Ready</p>
+                        </div>
+                        <div class="aws-service">
+                            <div class="service-icon">📊</div>
+                            <h4>CloudWatch</h4>
+                            <p>Monitoring<br>Alerts</p>
+                        </div>
+                    </div>
+
+                    <div style="font-weight: bold; margin: 30px 0 20px 0; color: #ff9800;">🌐 Servicios Globales</div>
+                    <div class="availability-zone">
+                        <div class="aws-service">
+                            <div class="service-icon">🪣</div>
+                            <h4>S3 Buckets</h4>
+                            <p>Data Lake<br>99.999999999%</p>
+                        </div>
+                        <div class="aws-service">
+                            <div class="service-icon">🔑</div>
+                            <h4>IAM + KMS</h4>
+                            <p>Identity<br>Encryption</p>
+                        </div>
+                        <div class="aws-service">
+                            <div class="service-icon">⚖️</div>
+                            <h4>Load Balancer</h4>
+                            <p>ALB<br>SSL Termination</p>
+                        </div>
+                        <div class="aws-service">
+                            <div class="service-icon">🌐</div>
+                            <h4>CloudFront</h4>
+                            <p>CDN<br>Global Cache</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: center; background: rgba(255,255,255,0.8); padding: 15px; border-radius: 10px;">
+                    <strong>📈 Capacidad Total:</strong> 50k requests/min | 
+                    <strong>🎯 SLA:</strong> 99.9% uptime | 
+                    <strong>💰 Costo:</strong> ~$5,900/mes
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagrama 4: ML Pipeline Detallado -->
+        <div class="diagram-section">
+            <div class="diagram-title">
+                🔬 Pipeline de Machine Learning - Flujo Completo
+            </div>
+            <div class="diagram-description">
+                <strong>Propósito:</strong> Detalla cada etapa del pipeline de ML desde la ingesta de datos hasta el deployment del modelo, incluyendo métricas de calidad y performance.
+            </div>
+
+            <div class="ml-pipeline">
+                <div class="pipeline-stage">
+                    <div class="stage-number">1</div>
+                    <div class="stage-content">
+                        <h4>🔄 Data Ingestion</h4>
+                        <p>Recolección de datos de múltiples fuentes: transacciones, usuarios, geolocalización y patrones temporales.</p>
+                        <ul style="font-size: 0.9em; margin-top: 10px;">
+                            <li>Kafka streaming en tiempo real</li>
+                            <li>Batch processing nocturno</li>
+                            <li>Validación de esquemas</li>
+                        </ul>
+                    </div>
+                    <div class="stage-metrics">
+                        <strong>Volume</strong><br>
+                        2M+ trans/día<br>
+                        <strong>Latency</strong><br>
+                        <100ms
+                    </div>
+                </div>
+
+                <div class="pipeline-stage">
+                    <div class="stage-number">2</div>
+                    <div class="stage-content">
+                        <h4>🧹 Data Preprocessing</h4>
+                        <p>Limpieza, normalización y transformación de datos para preparar el dataset de entrenamiento.</p>
+                        <ul style="font-size: 0.9em; margin-top: 10px;">
+                            <li>Handling missing values</li>
+                            <li>Outlier detection y removal</li>
+                            <li>Data type conversions</li>
+                        </ul>
+                    </div>
+                    <div class="stage-metrics">
+                        <strong>Quality</strong><br>
+                        98.5% clean<br>
+                        <strong>Coverage</strong><br>

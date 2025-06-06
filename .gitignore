@@ -1,0 +1,7 @@
+# Ignorar datos locales (raw y backup)
+models/
+data/
+*.pkl
+*.parquet
+__pycache__/
+fraud-api/
