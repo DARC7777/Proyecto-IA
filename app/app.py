@@ -1,38 +1,38 @@
+# app/app.py
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 import pandas as pd
 import joblib
 import urllib.request
-import os
+import tempfile
 
-# URL del modelo en Hugging Face
+app = FastAPI()
+
 MODEL_URL = "https://huggingface.co/Juannavas38/fraud-model-rf/resolve/main/random_forest_baseline.pkl"
 
 def load_model_from_url(url):
-    os.makedirs("models", exist_ok=True)
-    local_path = "models/temp_model.pkl"
-    
-    if not os.path.exists(local_path):
-        urllib.request.urlretrieve(url, local_path)
-    
-    model = joblib.load(local_path)
+    with tempfile.NamedTemporaryFile(suffix=".pkl", delete=False) as tmp_file:
+        urllib.request.urlretrieve(url, tmp_file.name)
+        model = joblib.load(tmp_file.name)
     return model
 
 model = load_model_from_url(MODEL_URL)
 
-# Crear la API
-app = FastAPI(title="GlobalBank Fraud Detection API")
-
-# Definir el esquema de entrada
 class Transaction(BaseModel):
     amount: float
     credit_limit: float
-    current_age: float
+    current_age: int
     yearly_income: float
 
-# Endpoint de predicción
 @app.post("/predict")
-def predict(tx: Transaction):
-    input_data = pd.DataFrame([tx.dict()])
-    prediction = model.predict(input_data)[0]
+def predict(transaction: Transaction):
+    input_df = pd.DataFrame([{
+        "amount": transaction.amount,
+        "credit_limit": transaction.credit_limit,
+        "current_age": transaction.current_age,
+        "yearly_income": transaction.yearly_income
+    }])
+    prediction = model.predict(input_df)[0]
     return {"prediction": int(prediction)}
+
